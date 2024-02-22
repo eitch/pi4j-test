@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>ch.eitchnet</groupId>
+    <artifactId>pi4j-test</artifactId>
+    <name>pi4j-test</name>
+    <version>0.1.0-SNAPSHOT</version>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <slf4j.version>2.0.5</slf4j.version>
+        <logback-classic.version>1.4.14</logback-classic.version>
+        <pi4j.version>2.5.0-SNAPSHOT</pi4j.version>
+    </properties>
+
+    <dependencies>
+        <!-- LOGGING DEPENDENCIES -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback-classic.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-core</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-raspberrypi</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-gpiod</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+
+    </dependencies>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <finalName>Pi4jTest</finalName>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>copy-dependencies</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <overWriteSnapshots>true</overWriteSnapshots>
+                                    <outputDirectory>
+                                        ${project.build.directory}/libs
+                                    </outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <configuration>
+                            <archive>
+                                <manifest>
+                                    <addClasspath>true</addClasspath>
+                                    <classpathPrefix>libs/</classpathPrefix>
+                                    <mainClass>ch.eitchnet.pi4j.test.Pi4jTest</mainClass>
+                                    <useUniqueVersions>false</useUniqueVersions>
+                                </manifest>
+                            </archive>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <artifactId>maven-assembly-plugin</artifactId>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/assembly/assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>all</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>single</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
+
+</project>
