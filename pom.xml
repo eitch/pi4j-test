@@ -42,9 +42,19 @@
             <artifactId>pi4j-plugin-raspberrypi</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.pi4j</groupId>-->
+<!--            <artifactId>pi4j-plugin-gpiod</artifactId>-->
+<!--            <version>${pi4j.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-gpiod</artifactId>
+            <artifactId>pi4j-plugin-linuxfs</artifactId>
+            <version>${pi4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.pi4j</groupId>
+            <artifactId>pi4j-plugin-pigpio</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
 
@@ -83,7 +93,7 @@
                                 <manifest>
                                     <addClasspath>true</addClasspath>
                                     <classpathPrefix>libs/</classpathPrefix>
-                                    <mainClass>ch.eitchnet.pi4j.test.Pi4jTest</mainClass>
+                                    <mainClass>ch.eitchnet.pi4j.test.Main</mainClass>
                                     <useUniqueVersions>false</useUniqueVersions>
                                 </manifest>
                             </archive>

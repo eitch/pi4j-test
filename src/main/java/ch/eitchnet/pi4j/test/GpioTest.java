@@ -9,13 +9,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 
-public class Pi4jTest {
+public class GpioTest {
 
-	private static final Logger logger = LoggerFactory.getLogger(Pi4jTest.class);
+	private static final Logger logger = LoggerFactory.getLogger(GpioTest.class);
 
 	// Connect a LED to PIN 15 = BCM 22
 	private static final int PIN_LED_YELLOW = 19;
@@ -31,12 +29,12 @@ public class Pi4jTest {
 		DigitalOutput ledGreen = pi4j.dout().create(PIN_LED_GREEN);
 		DigitalInput redBtn = pi4j.din().create(PIN_BTN_RED);
 
-		ledRed.blink(1, 5, TimeUnit.SECONDS);
-		ledYellow.pulse(1, TimeUnit.SECONDS);
-		Future<?> blinkRed = ledRed.blinkAsync(1, 5, TimeUnit.SECONDS);
-		Future<?> pulseYellow = ledYellow.pulseAsync(1, TimeUnit.SECONDS);
-		blinkRed.get();
-		pulseYellow.get();
+//		ledRed.blink(1, 5, TimeUnit.SECONDS);
+//		ledYellow.pulse(1, TimeUnit.SECONDS);
+//		Future<?> blinkRed = ledRed.blinkAsync(1, 5, TimeUnit.SECONDS);
+//		Future<?> pulseYellow = ledYellow.pulseAsync(1, TimeUnit.SECONDS);
+//		blinkRed.get();
+//		pulseYellow.get();
 
 		AtomicReference<Digital> greenBtnRef = new AtomicReference<>();
 
