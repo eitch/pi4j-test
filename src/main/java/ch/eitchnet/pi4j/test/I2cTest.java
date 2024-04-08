@@ -4,6 +4,7 @@ import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
 import com.pi4j.io.gpio.digital.DigitalInput;
 import com.pi4j.io.gpio.digital.DigitalInputConfig;
+import com.pi4j.io.gpio.digital.DigitalInputConfigBuilder;
 import com.pi4j.io.gpio.digital.PullResistance;
 import com.pi4j.io.i2c.I2C;
 import org.slf4j.Logger;
@@ -16,29 +17,30 @@ public class I2cTest {
 	public static void main(String[] args) throws InterruptedException {
 		Context pi4j = Pi4J.newAutoContext();
 
-		DigitalInput interrupt = pi4j
-				.din()
-				.create(DigitalInputConfig.newBuilder(pi4j).address(25).pull(PullResistance.PULL_UP).build());
+		DigitalInputConfigBuilder inputConfigBuilder = DigitalInputConfig
+				.newBuilder(pi4j)
+				.address(25)
+				.pull(PullResistance.PULL_UP);
+		DigitalInput interrupt = pi4j.din().create(inputConfigBuilder.build());
 		I2C input = pi4j.i2c().create(1, 0x38);
 		I2C output = pi4j.i2c().create(1, 0x20);
 
+		logger.info("Interrupt is on {} {}", interrupt.description(), interrupt.getName());
 		byte data = (byte) input.read();
-		logger.info("Read input state " + asBinary(data) + " for " + input);
+		logger.info("Read input state {} for {} {}", asBinary(data), input.description(), input.getName());
 		data = (byte) output.read();
-		logger.info("Read output state " + asBinary(data) + " for " + output);
+		logger.info("Read output state {} for {} {}", asBinary(data), output.description(), output.getName());
 
 		interrupt.addListener(e -> readInput(input, output));
 
-		Runtime.getRuntime().addShutdownHook(new Thread() {
-			public void run() {
-				try {
-					logger.info("Shutting down...");
-					pi4j.shutdown();
-				} catch (Exception e) {
-					logger.error("Failed to shutdown", e);
-				}
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+			try {
+				logger.info("Shutting down...");
+				pi4j.shutdown();
+			} catch (Exception e) {
+				logger.error("Failed to shutdown", e);
 			}
-		});
+		}));
 
 		synchronized (Thread.currentThread()) {
 			Thread.currentThread().wait();
@@ -47,7 +49,7 @@ public class I2cTest {
 
 	private static void readInput(I2C input, I2C output) {
 		byte data = (byte) input.read();
-		logger.info("Read new state " + asBinary(data));
+		logger.info("Read new state {}", asBinary(data));
 
 		for (int j = 0; j < 8; j++) {
 			boolean state = isBitSet(data, j);
