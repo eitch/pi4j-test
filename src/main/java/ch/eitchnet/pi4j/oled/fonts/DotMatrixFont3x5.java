@@ -1,5 +1,10 @@
 package ch.eitchnet.pi4j.oled.fonts;
 
+/**
+ * This font implements a 3x5 pixel character set to write text to the SH1106 OLED Display
+ *
+ * @author Roland Baudouin
+ */
 public class DotMatrixFont3x5 extends DotMatrixFont {
 	private static final int fontWidth = 3;
 	private static final int fontHeight = 5;

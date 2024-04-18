@@ -12,6 +12,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
+/**
+ * <p>This class implements the logic to communicate with an SH1106 OLED display. The display is a 132x64 Dot Matrix
+ * OLED driver with controller. It is controlled over I2C.</p>
+ *
+ * <p>Usage is as follows:</p>
+ * <pre>
+ * SH1106 display = new SH1106(new Pi4jI2cBus(pi4j, false));
+ * display.setFont(new DotMatrixFont5x7());
+ * display.writeLine(3, "Hello World", true);
+ * display.display();
+ * </pre>
+ *
+ * @author Roland Baudouin
+ */
 public class SH1106 {
 
 	private static final Logger logger = LoggerFactory.getLogger(SH1106.class);

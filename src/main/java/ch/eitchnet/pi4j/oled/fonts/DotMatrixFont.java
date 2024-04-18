@@ -1,5 +1,10 @@
 package ch.eitchnet.pi4j.oled.fonts;
 
+/**
+ * This is the base class of a dot matrix font to write text to the SH1106 OLED Display
+ *
+ * @author Roland Baudouin
+ */
 public abstract class DotMatrixFont implements IFont {
 	private final int fontWidth;
 	private final int fontHeight;
