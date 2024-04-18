@@ -1,23 +1,18 @@
 package ch.eitchnet.pi4j.i2c;
 
 import com.pi4j.io.i2c.I2C;
-import com.pi4j.io.i2c.I2CDevice;
-import li.strolch.utils.communication.PacketObserver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
+import java.util.concurrent.Callable;
 
 import static ch.eitchnet.pi4j.i2c.StringHelper.toHexString;
 import static ch.eitchnet.pi4j.i2c.StringHelper.toPrettyHexString;
-import static li.strolch.utils.helper.StringHelper.toHexString;
-import static li.strolch.utils.helper.StringHelper.toPrettyHexString;
 
 public class LoggingI2cDevice {
 
 	private static final Logger logger = LoggerFactory.getLogger(LoggingI2cDevice.class);
 
-	private final Pi4jI2cBus pi4jI2cBus;
 	private final I2C i2C;
 
 	private final String i2cAddressWriteS;
@@ -31,8 +26,7 @@ public class LoggingI2cDevice {
 
 	private PacketObserver packetObserver;
 
-	public LoggingI2cDevice(Pi4jI2cBus pi4jI2cBus, I2C i2C, PacketObserver packetObserver) {
-		this.pi4jI2cBus = pi4jI2cBus;
+	public LoggingI2cDevice(I2C i2C, PacketObserver packetObserver) {
 		this.i2C = i2C;
 		this.packetObserver = packetObserver;
 		this.i2cAddressS = toHexString((byte) this.i2C.getDevice());
@@ -53,16 +47,11 @@ public class LoggingI2cDevice {
 		return this.i2C.getDevice();
 	}
 
-	private void assertHasLock() {
-		this.pi4jI2cBus.assertLockHeldBy();
-	}
-
-	public void write(boolean log, byte data) throws IOException, InterruptedException {
-		assertHasLock();
+	public void write(boolean log, byte data) throws InterruptedException {
 		sleepIfNecessary();
 
 		if (log)
-			logger.info(this.i2cAddressWriteS + toHexString(data));
+			logger.info("{}{}", this.i2cAddressWriteS, toHexString(data));
 
 		this.i2C.write(data);
 
@@ -71,16 +60,15 @@ public class LoggingI2cDevice {
 		this.lastWriteNanos = System.nanoTime();
 	}
 
-	public void write(boolean log, byte[] buffer) throws IOException, InterruptedException {
+	public void write(boolean log, byte[] buffer) throws InterruptedException {
 		write(log, buffer, 0, buffer.length);
 	}
 
-	public void write(boolean log, byte[] buffer, int pos, int length) throws IOException, InterruptedException {
-		assertHasLock();
+	public void write(boolean log, byte[] buffer, int pos, int length) throws InterruptedException {
 		sleepIfNecessary();
 
 		if (log)
-			logger.info(this.i2cAddressWriteS + toPrettyHexString(buffer));
+			logger.info("{}{}", this.i2cAddressWriteS, toPrettyHexString(buffer));
 
 		this.i2C.write(buffer, pos, length);
 
@@ -89,26 +77,24 @@ public class LoggingI2cDevice {
 		this.lastWriteNanos = System.nanoTime();
 	}
 
-	public void write(boolean log, int address, byte b) throws IOException, InterruptedException {
+	public void write(boolean log, int address, byte b) throws InterruptedException {
 		write(log, new byte[]{(byte) address, b});
 	}
 
-	public void write(boolean log, int address, byte[] buffer) throws IOException, InterruptedException {
+	public void write(boolean log, int address, byte[] buffer) throws InterruptedException {
 		byte[] data = new byte[buffer.length + 1];
 		data[0] = (byte) address;
 		System.arraycopy(buffer, 0, data, 1, buffer.length);
 		write(log, data);
 	}
 
-	public void writeRead(boolean log, byte[] writeBuffer, byte[] readBuffer) throws IOException, InterruptedException {
-		assertHasLock();
+	public void writeRead(boolean log, byte[] writeBuffer, byte[] readBuffer) throws InterruptedException {
 		sleepIfNecessary();
 
 		if (log)
-			logger.info(this.i2cAddressWriteS + toPrettyHexString(writeBuffer));
+			logger.info("{}{}", this.i2cAddressWriteS, toPrettyHexString(writeBuffer));
 
-		this.i2C.
-		int read = this.i2C.read(writeBuffer, 0, writeBuffer.length, readBuffer, 0, readBuffer.length);
+		int read = this.i2C.writeRead(writeBuffer, 0, writeBuffer.length, readBuffer, 0, readBuffer.length);
 		if (read != readBuffer.length)
 			throw new IllegalStateException("Expected to read " + readBuffer.length + " bytes, but read " + read);
 
@@ -119,30 +105,28 @@ public class LoggingI2cDevice {
 		this.lastWriteNanos = System.nanoTime();
 
 		if (log)
-			logger.info(this.i2cAddressReadS + toPrettyHexString(readBuffer));
+			logger.info("{}{}", this.i2cAddressReadS, toPrettyHexString(readBuffer));
 	}
 
-	public int read(boolean log) throws IOException {
-		assertHasLock();
-		int read = this.i2cDevice.read();
+	public int read(boolean log) {
+		int read = this.i2C.read();
 
 		if (log)
-			logger.info(this.i2cAddressReadS + toHexString((byte) read));
+			logger.info("{}{}", this.i2cAddressReadS, toHexString((byte) read));
 		if (this.packetObserver != null)
 			this.packetObserver.notifyReceived(new byte[]{(byte) read});
 
 		return read;
 	}
 
-	public int read(boolean log, byte address) throws IOException {
-		assertHasLock();
+	public int read(boolean log, byte address) {
 		if (log)
-			logger.info(this.i2cAddressWriteS + toHexString(address));
+			logger.info("{}{}", this.i2cAddressWriteS, toHexString(address));
 
-		int read = this.i2cDevice.read(address);
+		int read = this.i2C.readRegister(address);
 
 		if (log)
-			logger.info(this.i2cAddressReadS + toHexString((byte) read));
+			logger.info("{}{}", this.i2cAddressReadS, toHexString((byte) read));
 		if (this.packetObserver != null) {
 			this.packetObserver.notifySent(new byte[]{address});
 			this.packetObserver.notifyReceived(new byte[]{(byte) read});
@@ -151,37 +135,35 @@ public class LoggingI2cDevice {
 		return read;
 	}
 
-	public int read(boolean log, byte[] buffer) throws IOException {
+	public int read(boolean log, byte[] buffer) {
 		return read(log, buffer, 0, buffer.length);
 	}
 
-	public int read(boolean log, byte[] buffer, int pos, int length) throws IOException {
-		assertHasLock();
+	public int read(boolean log, byte[] buffer, int pos, int length) {
 		if (log)
-			logger.info(this.i2cAddressReadingS + buffer.length + " bytes from last set address...");
+			logger.info("{}{} bytes from last set address...", this.i2cAddressReadingS, buffer.length);
 
-		int read = this.i2cDevice.read(buffer, pos, length);
+		int read = this.i2C.read(buffer, pos, length);
 		if (read != buffer.length)
 			throw new IllegalStateException("Expected to read " + buffer.length + " bytes, but read " + read);
 
 		if (log)
-			logger.info(this.i2cAddressReadS + toPrettyHexString(buffer, pos, length));
+			logger.info("{}{}", this.i2cAddressReadS, toPrettyHexString(buffer, pos, length));
 		if (this.packetObserver != null)
 			this.packetObserver.notifyReceived(new byte[]{(byte) read});
 		return read;
 	}
 
-	public void read(boolean log, byte address, byte[] buffer) throws IOException {
-		assertHasLock();
+	public void read(boolean log, byte address, byte[] buffer) {
 		if (log)
-			logger.info(this.i2cAddressReadingS + buffer.length + " bytes from address " + toHexString(address));
+			logger.info("{}{} bytes from address {}", this.i2cAddressReadingS, buffer.length, toHexString(address));
 
-		int read = this.i2cDevice.read(address, buffer, 0, buffer.length);
+		int read = this.i2C.readRegister(address, buffer, 0, buffer.length);
 		if (read != buffer.length)
 			throw new IllegalStateException("Expected to read " + buffer.length + " bytes, but read " + read);
 
 		if (log)
-			logger.info(this.i2cAddressReadS + toPrettyHexString(buffer));
+			logger.info("{}{}", this.i2cAddressReadS, toPrettyHexString(buffer));
 		if (this.packetObserver != null) {
 			this.packetObserver.notifySent(new byte[]{address});
 			this.packetObserver.notifyReceived(buffer);
@@ -213,11 +195,15 @@ public class LoggingI2cDevice {
 		this.ioWaitNanos = ioWaitNanos;
 
 		if (ioWait == 0L)
-			logger.info("Using " + ioWaitNanos + " ns for write sleep");
+			logger.info("Using {} ns for write sleep", ioWaitNanos);
 	}
 
 	@Override
 	public String toString() {
 		return "I2C Device @ " + this.i2cAddressS;
+	}
+
+	public <T> T execute(Callable<T> callable) {
+		return this.i2C.execute(callable);
 	}
 }

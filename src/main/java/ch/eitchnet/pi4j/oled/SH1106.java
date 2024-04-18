@@ -143,7 +143,7 @@ public class SH1106 {
 	 */
 	public void writeLine(int line, String string, boolean trim) {
 		if (line < 1 || line > 8) {
-			logger.error("Ignoring illegal line number " + line);
+			logger.error("Ignoring illegal line number {}", line);
 			return;
 		}
 		if (this.font == null)
@@ -174,7 +174,7 @@ public class SH1106 {
 		int writeLength = bytes.length;
 		if (destPos + writeLength >= this.lcdBuffer.length) {
 			writeLength = this.lcdBuffer.length - destPos;
-			logger.error("Writing too much data! Trimming to " + writeLength);
+			logger.error("Writing too much data! Trimming to {}", writeLength);
 		}
 		System.arraycopy(bytes, 0, this.lcdBuffer, destPos, writeLength);
 	}
@@ -198,10 +198,8 @@ public class SH1106 {
 
 		int drawWidth = Math.min(imageWidth, LCD_PIXEL_WIDTH);
 		int drawHeight = Math.min(imageHeight, LCD_PIXEL_HEIGHT);
-		if (drawWidth != imageWidth || drawHeight != imageHeight) {
-			logger.warn("Image " + imageName + " (" + imageWidth + "x" + imageHeight +
-					") is larger than display. Truncating.");
-		}
+		if (drawWidth != imageWidth || drawHeight != imageHeight)
+			logger.warn("Image {} ({}x{}) is larger than display. Truncating.", imageName, imageWidth, imageHeight);
 
 		for (int x = 0; x < drawWidth; x++) {
 			for (int y = 0; y < drawHeight; y++) {

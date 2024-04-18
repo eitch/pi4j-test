@@ -5,9 +5,10 @@ import ch.eitchnet.pi4j.oled.SH1106;
 import ch.eitchnet.pi4j.oled.fonts.DotMatrixFont5x7;
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.io.i2c.I2C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
 
 public class EitchLeds {
 
@@ -25,15 +26,17 @@ public class EitchLeds {
 
 	private static final Logger logger = LoggerFactory.getLogger(EitchLeds.class);
 
-	public static void main(String[] args) throws InterruptedException {
+	public static void main(String[] args) throws InterruptedException, IOException {
 		Context pi4j = Pi4J.newAutoContext();
 
 		Lamp leftLamp = new Lamp(pi4j, PIN_LAMP_1_R, PIN_LAMP_1_Y, PIN_LAMP_1_G);
 		Lamp rightLamp = new Lamp(pi4j, PIN_LAMP_2_R, PIN_LAMP_2_Y, PIN_LAMP_2_G);
 		Lamps lamps = new Lamps(leftLamp, rightLamp);
 
-		SH1106 display = new SH1106(rawBus == null ? new Pi4jI2cBus(false) : rawBus);
+		SH1106 display = new SH1106(new Pi4jI2cBus(pi4j, false));
 		display.setFont(new DotMatrixFont5x7());
+		display.writeLine(3, "Hello World", true);
+		display.display();
 
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {

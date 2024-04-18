@@ -2,13 +2,14 @@ package ch.eitchnet.pi4j.test;
 
 import ch.eitchnet.pi4j.leds.EitchLeds;
 
+import java.io.IOException;
 import java.util.concurrent.ExecutionException;
 
 public class Main {
 
 	public static final String USAGE = "Usage: java -jar Pi4jTest.jar <GpioTest|I2cTest|EitchLeds> ";
 
-	public static void main(String[] args) throws ExecutionException, InterruptedException {
+	public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
 		if (args.length == 0) {
 			System.out.println(USAGE);
 			System.exit(1);

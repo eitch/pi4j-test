@@ -3,22 +3,14 @@ package ch.eitchnet.pi4j.i2c;
 import com.pi4j.context.Context;
 import com.pi4j.io.i2c.I2C;
 import com.pi4j.io.i2c.I2CProvider;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
-
-import static ch.eitchnet.pi4j.i2c.StringHelper.formatMillisecondsDuration;
 
 public class Pi4jI2cBus implements EncodedRawI2cBus {
-
-	private static final Logger logger = LoggerFactory.getLogger(Pi4jI2cBus.class);
 
 	private final Context pi4j;
 	private final int bus;
@@ -51,39 +43,40 @@ public class Pi4jI2cBus implements EncodedRawI2cBus {
 		boolean isRead = (i2cData[0] & 0x01) == 1;
 
 		LoggingI2cDevice device = getI2cDevice(address);
+		return device.execute(() -> {
+			if (isRead) {
+				if (i2cData.length < 2 || i2cData.length > 3)
+					throw new IllegalStateException("Read command should have length 2 or 3");
 
-		if (isRead) {
-			if (i2cData.length < 2 || i2cData.length > 3)
-				throw new IllegalStateException("Read command should have length 2 or 3");
+				if (i2cData.length == 2) {
+					// pure Read
+					return read(device, i2cData[1]);
 
-			if (i2cData.length == 2) {
-				// pure Read
-				return read(device, i2cData[1]);
+				} else {
+					// WriteRead
+
+					// write pointer
+					device.write(this.verbose, i2cData[1]);
+					// read data
+					return read(device, i2cData[2]);
+				}
 
 			} else {
-				// WriteRead
 
-				// write pointer
-				device.write(this.verbose, i2cData[1]);
-				// read data
-				return read(device, i2cData[2]);
+				if (i2cData.length == 1)
+					throw new IllegalStateException("No data to write!");
+
+				device.write(this.verbose, i2cData, 1, i2cData.length - 1);
 			}
 
-		} else {
-
-			if (i2cData.length == 1)
-				throw new IllegalStateException("No data to write!");
-
-			device.write(this.verbose, i2cData, 1, i2cData.length - 1);
-		}
-
-		return new byte[0];
+			return new byte[0];
+		});
 	}
 
 	private LoggingI2cDevice getI2cDevice(int address) {
 		return this.i2cDeviceMap.computeIfAbsent(address, b -> {
 			I2C i2C = this.pi4j.i2c().create(this.bus, address);
-			return new LoggingI2cDevice(this, i2C, null);
+			return new LoggingI2cDevice(i2C, null);
 		});
 	}
 
@@ -124,54 +117,5 @@ public class Pi4jI2cBus implements EncodedRawI2cBus {
 	@Override
 	public void close() {
 		// do nothing
-	}
-
-	public <T> T execute(boolean log, Callable<T> action) throws IOException {
-		long start = System.currentTimeMillis();
-
-		try {
-			lock();
-			return action.call();
-		} catch (InterruptedException e) {
-			throw new IllegalStateException("Interrupted while waiting for lock!", e);
-		} catch (Exception e) {
-			throw new IllegalStateException("Failed to execute callable " + action, e);
-		} finally {
-			unlock();
-			if (log)
-				logger.info("Took {}", formatMillisecondsDuration(System.currentTimeMillis() - start));
-		}
-	}
-
-	public <T> T execute(boolean log, LoggingI2cDevice i2CDevice, Callable<T> action) throws IOException {
-		long start = System.currentTimeMillis();
-
-		try {
-			lock();
-			this.pi4j.getI2CProvider().
-			return this.i2cBus.runBusLockedDeviceAction(i2CDevice.getI2cDevice(), action);
-		} catch (InterruptedException e) {
-			throw new IllegalStateException("Interrupted while waiting for lock!", e);
-		} finally {
-			unlock();
-			if (log)
-				logger.info("Took " + formatMillisecondsDuration(System.currentTimeMillis() - start));
-		}
-	}
-
-	private void unlock() {
-		this.lock.unlock();
-	}
-
-	private void lock() throws InterruptedException {
-		if (!this.lock.tryLock(LOCK_WAIT_SECONDS, TimeUnit.SECONDS)) {
-			throw new IllegalStateException(
-					"Failed to acquire lock after " + LOCK_WAIT_SECONDS + " " + TimeUnit.SECONDS);
-		}
-	}
-
-	public void assertLockHeldBy() {
-		if (!this.lock.isHeldByCurrentThread())
-			throw new IllegalStateException("I2C lock is not held by this thread!");
 	}
 }
