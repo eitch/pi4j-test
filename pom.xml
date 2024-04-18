@@ -17,7 +17,7 @@
         <slf4j.version>2.0.5</slf4j.version>
         <logback-classic.version>1.4.14</logback-classic.version>
         <pi4j.version>2.5.1-SNAPSHOT</pi4j.version>
-        <jSerialComm.version>2.10.4</jSerialComm.version>
+        <jSerialComm.version>2.11.0</jSerialComm.version>
     </properties>
 
     <dependencies>
@@ -40,22 +40,12 @@
         </dependency>
         <dependency>
             <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-raspberrypi</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-gpiod</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
         <dependency>
             <groupId>com.pi4j</groupId>
             <artifactId>pi4j-plugin-linuxfs</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-pigpio</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
 

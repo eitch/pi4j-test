@@ -67,7 +67,7 @@ public class SH1106 {
 	private static final byte SH1106_VERTICAL_AND_RIGHT_HORIZONTAL_SCROLL = 0x29;
 	private static final byte SH1106_VERTICAL_AND_LEFT_HORIZONTAL_SCROLL = 0x2A;
 
-	private final EncodedRawI2cBus i2cDevice;
+	private final EncodedRawI2cBus i2cBus;
 	private IFont font;
 	private static final int LCD_PIXEL_WIDTH = 128;
 	private static final int LCD_PIXEL_HEIGHT = 64;
@@ -80,8 +80,8 @@ public class SH1106 {
 
 	private final byte[] lcdBuffer = new byte[LCD_PIXEL_WIDTH * LCD_PIXEL_HEIGHT / 8];
 
-	public SH1106(EncodedRawI2cBus i2cDevice) throws IOException, InterruptedException {
-		this.i2cDevice = i2cDevice;
+	public SH1106(EncodedRawI2cBus i2cBus) throws IOException, InterruptedException {
+		this.i2cBus = i2cBus;
 		init();
 	}
 
@@ -283,7 +283,7 @@ public class SH1106 {
 	}
 
 	private void sendCommand(byte b) throws IOException, InterruptedException {
-		this.i2cDevice.sendI2c(new byte[]{I2C_8BITS_ADDRESS, 0x00, b});
+		this.i2cBus.sendI2c(new byte[]{I2C_8BITS_ADDRESS, 0x00, b});
 	}
 
 	private void sendData(byte[] b) throws IOException, InterruptedException {
@@ -291,7 +291,7 @@ public class SH1106 {
 		buffer[0] = I2C_8BITS_ADDRESS;
 		buffer[1] = 0x40;
 		System.arraycopy(b, 0, buffer, 2, b.length);
-		this.i2cDevice.sendI2c(buffer);
+		this.i2cBus.sendI2c(buffer);
 	}
 
 	@Override
