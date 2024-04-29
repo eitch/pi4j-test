@@ -21,6 +21,7 @@ import static ch.eitchnet.pi4j.pboe.ImageHelper.imageToMatrix;
 
 public class EitchLeds {
 
+	public static final String SERIAL_PORT = "/dev/serial0";
 	public static int PIN_LED_MATRIX = 14;
 
 	public static int PIN_LAMP_1_R = 17;
@@ -70,7 +71,7 @@ public class EitchLeds {
 			}
 		});
 
-		PixelBlazeOutputExpander pixelBlaze = new PixelBlazeOutputExpander("/dev/serial1");
+		PixelBlazeOutputExpander pixelBlaze = new PixelBlazeOutputExpander(SERIAL_PORT);
 		pixelBlaze.sendAllOff(MATRIX_CHANNEL, MATRIX_NUMBER_OF_LEDS);
 		Thread.sleep(100L);
 
@@ -81,7 +82,7 @@ public class EitchLeds {
 				logger.info("Shutdown hook called...");
 
 				logger.info("Clearing pixelblaze...");
-				PixelBlazeOutputExpander tmp = new PixelBlazeOutputExpander("/dev/serial1");
+				PixelBlazeOutputExpander tmp = new PixelBlazeOutputExpander(SERIAL_PORT);
 				tmp.sendAllOff(MATRIX_CHANNEL, MATRIX_NUMBER_OF_LEDS);
 				logger.info("Shutting down pixelblaze...");
 				tmp.closePort();
