@@ -7,7 +7,7 @@ sudo raspi-config nonint do_onewire 0
 sudo systemctl disable hciuart
 echo "dtoverlay=disable-bt" | sudo tee -a /boot/firmware/config.txt
 
-sudo apt install i2c-tools vim git java-common libxi6 libxrender1 libxtst6
+sudo apt install -y i2c-tools vim git java-common libxi6 libxrender1 libxtst6
 curl -s "https://get.sdkman.io" | bash
 source .bashrc
 sdk install maven
