@@ -23,7 +23,7 @@ public class GpioTest {
 	private static final int PIN_5 = 5;
 
 	public static void main(String[] args) throws InterruptedException, ExecutionException {
-		Context pi4j = Pi4J.newAutoContext();
+		Context pi4j = Pi4J.newContextBuilder().autoDetect().disableShutdownHook().build();
 		DigitalOutput ledRed = pi4j.dout().create(PIN_LED_RED);
 		DigitalOutput ledYellow = pi4j.dout().create(PIN_LED_YELLOW);
 		DigitalOutput ledGreen = pi4j.dout().create(PIN_LED_GREEN);
