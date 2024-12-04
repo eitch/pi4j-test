@@ -34,45 +34,45 @@ public class LibGPIODController {
 		try {
 			SymbolLookup gpiodLib = SymbolLookup.libraryLookup(Path.of(LIBGPIOD_PATH), Arena.global());
 
-			gpiod_chip_open_by_name = linker.downcallHandle(gpiodLib.find("gpiod_chip_open_by_name").get(),
+			gpiod_chip_open_by_name = linker.downcallHandle(gpiodLib.find("gpiod_chip_open_by_name").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-			gpiod_chip_get_line = linker.downcallHandle(gpiodLib.find("gpiod_chip_get_line").get(),
+			gpiod_chip_get_line = linker.downcallHandle(gpiodLib.find("gpiod_chip_get_line").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.ADDRESS, ValueLayout.ADDRESS, ValueLayout.JAVA_INT));
 
-			gpiod_line_request_output = linker.downcallHandle(gpiodLib.find("gpiod_line_request_output").get(),
+			gpiod_line_request_output = linker.downcallHandle(gpiodLib.find("gpiod_line_request_output").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS,
 							ValueLayout.JAVA_INT));
 
-			gpiod_line_request_input = linker.downcallHandle(gpiodLib.find("gpiod_line_request_input").get(),
+			gpiod_line_request_input = linker.downcallHandle(gpiodLib.find("gpiod_line_request_input").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-			gpiod_line_get_value = linker.downcallHandle(gpiodLib.find("gpiod_line_get_value").get(),
+			gpiod_line_get_value = linker.downcallHandle(gpiodLib.find("gpiod_line_get_value").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS));
 
-			gpiod_line_set_value = linker.downcallHandle(gpiodLib.find("gpiod_line_set_value").get(),
+			gpiod_line_set_value = linker.downcallHandle(gpiodLib.find("gpiod_line_set_value").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.JAVA_INT));
 
 			gpiod_line_request_both_edges_events = linker.downcallHandle(
-					gpiodLib.find("gpiod_line_request_both_edges_events").get(),
+					gpiodLib.find("gpiod_line_request_both_edges_events").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-			gpiod_line_event_wait = linker.downcallHandle(gpiodLib.find("gpiod_line_event_wait").get(),
+			gpiod_line_event_wait = linker.downcallHandle(gpiodLib.find("gpiod_line_event_wait").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-			gpiod_line_event_read = linker.downcallHandle(gpiodLib.find("gpiod_line_event_read").get(),
+			gpiod_line_event_read = linker.downcallHandle(gpiodLib.find("gpiod_line_event_read").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS, ValueLayout.ADDRESS));
 
-			gpiod_line_event_get_fd = linker.downcallHandle(gpiodLib.find("gpiod_line_event_get_fd").get(),
+			gpiod_line_event_get_fd = linker.downcallHandle(gpiodLib.find("gpiod_line_event_get_fd").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.ADDRESS));
 
-			gpiod_line_event_read_fd = linker.downcallHandle(gpiodLib.find("gpiod_line_event_read_fd").get(),
+			gpiod_line_event_read_fd = linker.downcallHandle(gpiodLib.find("gpiod_line_event_read_fd").orElseThrow(),
 					FunctionDescriptor.of(ValueLayout.JAVA_INT, ValueLayout.JAVA_INT, ValueLayout.ADDRESS));
 
-			gpiod_line_release = linker.downcallHandle(gpiodLib.find("gpiod_line_release").get(),
+			gpiod_line_release = linker.downcallHandle(gpiodLib.find("gpiod_line_release").orElseThrow(),
 					FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
 
-			gpiod_chip_close = linker.downcallHandle(gpiodLib.find("gpiod_chip_close").get(),
+			gpiod_chip_close = linker.downcallHandle(gpiodLib.find("gpiod_chip_close").orElseThrow(),
 					FunctionDescriptor.ofVoid(ValueLayout.ADDRESS));
 
 		} catch (Exception e) {
