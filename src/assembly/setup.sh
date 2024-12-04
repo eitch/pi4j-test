@@ -14,8 +14,8 @@ sdk install maven
 
 mkdir -p ~/Downloads
 cd ~/Downloads
-wget https://cdn.azul.com/zulu/bin/zulu21.34.19-ca-jdk21.0.3-linux_arm64.deb
-sudo dpkg -i zulu21.34.19-ca-jdk21.0.3-linux_arm64.deb
+wget https://cdn.azul.com/zulu/bin/zulu23.30.13-ca-jdk23.0.1-linux_arm64.deb
+sudo dpkg -i zulu23.30.13-ca-jdk23.0.1-linux_arm64.deb
 
 #mkdir -p ~/src
 #cd ~/src
