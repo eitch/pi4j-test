@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutionException;
 
 public class Main {
 
-	public static final String USAGE = "Usage: java -jar Pi4jTest.jar <GpioTest|I2cTest|EitchLeds> ";
+	public static final String USAGE = "Usage: java -jar Pi4jTest.jar <GpioTest|I2cTest|EitchLeds|GpioInputOutput> ";
 
 	public static void main(String[] args) throws ExecutionException, InterruptedException, IOException {
 		if (args.length == 0) {
@@ -19,6 +19,7 @@ public class Main {
 			case "GpioTest" -> GpioTest.main(args);
 			case "I2cTest" -> I2cTest.main(args);
 			case "EitchLeds" -> EitchLeds.main(args);
+			case "GpioInputOutput" -> GpioInputOutputTest.main(args);
 			default -> {
 				System.out.println(USAGE);
 				System.exit(1);
