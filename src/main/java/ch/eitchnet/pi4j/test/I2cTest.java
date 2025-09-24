@@ -19,7 +19,7 @@ public class I2cTest {
 
 		DigitalInputConfigBuilder inputConfigBuilder = DigitalInputConfig
 				.newBuilder(pi4j)
-				.address(25)
+				.address(17)
 				.pull(PullResistance.PULL_UP);
 		DigitalInput interrupt = pi4j.din().create(inputConfigBuilder.build());
 		I2C input = pi4j.i2c().create(1, 0x38);
