@@ -2,10 +2,7 @@ package ch.eitchnet.pi4j.test;
 
 import com.pi4j.Pi4J;
 import com.pi4j.context.Context;
-import com.pi4j.io.gpio.digital.DigitalInput;
-import com.pi4j.io.gpio.digital.DigitalInputConfig;
-import com.pi4j.io.gpio.digital.DigitalInputConfigBuilder;
-import com.pi4j.io.gpio.digital.PullResistance;
+import com.pi4j.io.gpio.digital.*;
 import com.pi4j.io.i2c.I2C;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,8 +11,30 @@ public class I2cTest {
 
 	private static final Logger logger = LoggerFactory.getLogger(I2cTest.class);
 
+	private static final int PIN_LED = 22;
+	private static final int PIN_BTN = 24;
+
 	public static void main(String[] args) throws InterruptedException {
 		Context pi4j = Pi4J.newAutoContext();
+
+		DigitalOutput led = pi4j.dout().create(PIN_LED);
+
+		var buttonConfig = DigitalInput
+				.newConfigBuilder(pi4j)
+				.id("button")
+				.name("Press button")
+				.address(PIN_BTN)
+				.pull(PullResistance.PULL_DOWN)
+				.debounce(3000L);
+		DigitalInput btn = pi4j.din().create(buttonConfig);
+
+		btn.addListener(e -> {
+			logger.info("Button state: {}", e.state());
+			switch (e.state()) {
+				case LOW -> led.low();
+				case HIGH -> led.high();
+			}
+		});
 
 		DigitalInputConfigBuilder inputConfigBuilder = DigitalInputConfig
 				.newBuilder(pi4j)

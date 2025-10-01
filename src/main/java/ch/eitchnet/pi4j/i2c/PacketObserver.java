@@ -1,10 +1,6 @@
 package ch.eitchnet.pi4j.i2c;
 
-import com.jcraft.jsch.Packet;
-
 public interface PacketObserver {
-
-	void notify(Packet packet);
 
 	void notifySent(byte[] sent);
 

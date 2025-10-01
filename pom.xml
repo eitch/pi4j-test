@@ -10,13 +10,14 @@
     <version>0.1.0-SNAPSHOT</version>
 
     <properties>
-        <maven.compiler.source>23</maven.compiler.source>
-        <maven.compiler.target>23</maven.compiler.target>
+        <jdk.version>25</jdk.version>
+        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <maven.compiler.target>${jdk.version}</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <slf4j.version>2.0.17</slf4j.version>
         <logback-classic.version>1.5.18</logback-classic.version>
-        <pi4j.version>3.0.3</pi4j.version>
+        <pi4j.version>4.0.0-SNAPSHOT</pi4j.version>
         <jSerialComm.version>2.11.0</jSerialComm.version>
     </properties>
 
@@ -38,14 +39,24 @@
             <artifactId>pi4j-core</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.pi4j</groupId>-->
+<!--            <artifactId>pi4j-plugin-gpiod</artifactId>-->
+<!--            <version>${pi4j.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.pi4j</groupId>-->
+<!--            <artifactId>pi4j-plugin-linuxfs</artifactId>-->
+<!--            <version>${pi4j.version}</version>-->
+<!--        </dependency>-->
+<!--        <dependency>-->
+<!--            <groupId>com.pi4j</groupId>-->
+<!--            <artifactId>pi4j-plugin-pigpio</artifactId>-->
+<!--            <version>${pi4j.version}</version>-->
+<!--        </dependency>-->
         <dependency>
             <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-gpiod</artifactId>
-            <version>${pi4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.pi4j</groupId>
-            <artifactId>pi4j-plugin-linuxfs</artifactId>
+            <artifactId>pi4j-plugin-ffm</artifactId>
             <version>${pi4j.version}</version>
         </dependency>
 
