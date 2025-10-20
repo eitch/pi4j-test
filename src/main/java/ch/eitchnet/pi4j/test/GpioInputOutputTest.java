@@ -38,6 +38,19 @@ public class GpioInputOutputTest {
 			}
 		});
 
+		System.out.println("Blinking...");
+		for (int i = 0; i < 3; i++) {
+			System.out.println("LED on");
+			led.high();
+			Thread.sleep(300);
+			led.low();
+			System.out.println("LED off");
+			if (i < 2)
+				Thread.sleep(300);
+		}
+
+		System.out.println("Waiting for a button press...");
+
 		Runtime.getRuntime().addShutdownHook(new Thread() {
 			public void run() {
 				try {
